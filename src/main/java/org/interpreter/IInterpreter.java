@@ -1,5 +1,5 @@
 package org.interpreter;
 
 public interface IInterpreter {
-    String HandleInput();
+    String handleInput(String input);
 }
