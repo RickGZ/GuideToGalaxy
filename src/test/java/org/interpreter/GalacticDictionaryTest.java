@@ -10,6 +10,7 @@ class GalacticDictionaryTest {
 
     @BeforeEach
     void arrange() {
+        //Getters and Setters for valuesPerUnit are not necessary
         galacticDictionary = new GalacticDictionary();
     }
 

@@ -6,6 +6,7 @@ import java.util.Map;
 public class GalacticDictionary implements IGalacticDictionary {
     private Map<String, String> romanToGalactic;
     private Map<String, Integer> romanNumeralValues;
+    private Map<String, Integer> valuesPerUnit;
 
     public GalacticDictionary() {
         romanToGalactic = new HashMap<>();
@@ -13,6 +14,8 @@ public class GalacticDictionary implements IGalacticDictionary {
 
         romanNumeralValues = new HashMap<>();
         initializeRomanNumerals();
+
+        valuesPerUnit = new HashMap<>();
     }
 
     private void initializeRomanToGalacticMap() {
@@ -49,5 +52,13 @@ public class GalacticDictionary implements IGalacticDictionary {
         if (romanToGalactic.containsKey(upperCaseRoman)) {
             romanToGalactic.put(upperCaseRoman, galacticNumeral);
         }
+    }
+
+    public void setValuePerUnit(String unit, int value) {
+        valuesPerUnit.put(unit, value);
+    }
+
+    public int getValuePerUnit(String unit) {
+        return valuesPerUnit.get(unit);
     }
 }
