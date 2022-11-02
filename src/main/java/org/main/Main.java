@@ -18,8 +18,8 @@ public class Main {
             String result = null;
             try {
                 result = interpreter.handleInput(reader.readLine());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                result = e.getMessage();
             }
             System.out.println(result);
         }

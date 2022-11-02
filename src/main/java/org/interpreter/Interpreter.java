@@ -8,13 +8,15 @@ public class Interpreter implements IInterpreter {
         galacticDictionary = new GalacticDictionary();
     }
 
-    public String handleInput(String input) {
+    public String handleInput(String input) throws NoIdeaException {
         String[] inputStringArray = input.split(" ");
+        if (inputStringArray.length < 3)
+            throw new NoIdeaException();
 
         if(Objects.equals(inputStringArray[1], "is")) { //Set-Statement
             boolean isValidSetStatement = validateSetStatement(inputStringArray);
             if (!isValidSetStatement)
-                return "I have no idea what you are talking about";
+                throw new NoIdeaException();
 
             saveRomanToGalactic(inputStringArray);
         }
@@ -23,7 +25,7 @@ public class Interpreter implements IInterpreter {
                 return "" + galacticDictionary.getIntegerValueForGalacticNumeral(inputStringArray[3]); //basic implementation, no calc
         }
         else {
-            return "I have no idea what you are talking about";
+            throw new NoIdeaException();
         }
 
         return "Input processed.";
@@ -37,6 +39,6 @@ public class Interpreter implements IInterpreter {
 
     private boolean validateSetStatement(String[] input) {
         //Set-Statement
-        return Objects.equals(input[1], "is") && input.length == 3 && input[2].length() == 1;
+        return Objects.equals(input[1].toLowerCase(), "is") && input.length == 3 && input[2].length() == 1;
     }
 }
