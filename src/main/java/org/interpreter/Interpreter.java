@@ -1,11 +1,14 @@
 package org.interpreter;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Interpreter implements IInterpreter {
     IGalacticDictionary galacticDictionary;
+    INumeralCalculator numeralCalculator;
     public Interpreter() {
         galacticDictionary = new GalacticDictionary();
+        numeralCalculator = new NumeralCalculator(galacticDictionary);
     }
 
     public String handleInput(String input) throws NoIdeaException {
@@ -13,16 +16,17 @@ public class Interpreter implements IInterpreter {
         if (inputStringArray.length < 3)
             throw new NoIdeaException();
 
-        if(Objects.equals(inputStringArray[1], "is")) { //Set-Statement
-            boolean isValidSetStatement = validateSetStatement(inputStringArray);
-            if (!isValidSetStatement)
-                throw new NoIdeaException();
-
+        if(isValidSimpleSetStatement(inputStringArray)) { //Simple Set-Statement
             saveRomanToGalactic(inputStringArray);
         }
+        else if (Objects.equals(inputStringArray[inputStringArray.length - 1].toLowerCase(), "credits")) {
+            throw new NoIdeaException();
+        }
         else if (input.toLowerCase().startsWith("how much is ")) {
-            if (inputStringArray.length == 4)
-                return "" + galacticDictionary.getIntegerValueForGalacticNumeral(inputStringArray[3]); //basic implementation, no calc
+            if (inputStringArray.length > 4) {
+                String [] galacticNumerals = Arrays.copyOfRange(inputStringArray, 3, inputStringArray.length);
+                return input.substring(12) + " is " + numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
+            }
         }
         else {
             throw new NoIdeaException();
@@ -37,7 +41,7 @@ public class Interpreter implements IInterpreter {
         galacticDictionary.setRomanGalactic(roman, galactic);
     }
 
-    private boolean validateSetStatement(String[] input) {
+    private boolean isValidSimpleSetStatement(String[] input) {
         //Set-Statement
         return Objects.equals(input[1].toLowerCase(), "is") && input.length == 3 && input[2].length() == 1;
     }
