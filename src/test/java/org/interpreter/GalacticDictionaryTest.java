@@ -10,7 +10,7 @@ class GalacticDictionaryTest {
 
     @BeforeEach
     void arrange() {
-        //Getters and Setters for valuesPerUnit are not necessary
+        //Getter and Setter tests for valuesPerUnit are not necessary, as those are implicitly tested in other tests.
         galacticDictionary = new GalacticDictionary();
     }
 
@@ -63,5 +63,20 @@ class GalacticDictionaryTest {
         assertEquals(5, galacticDictionary.getIntegerValueForGalacticNumeral("vrok"));
         assertEquals(100, galacticDictionary.getIntegerValueForGalacticNumeral("crok"));
         assertEquals(0, galacticDictionary.getIntegerValueForGalacticNumeral("rrok"));
+    }
+
+    @Test
+    void isExistingRomanNumeral() {
+        //Arrange
+        String validNumeral = "X", invalidNumeral = "Y";
+        boolean validResult, invalidResult;
+
+        //Act
+        validResult = galacticDictionary.isExistingRomanNumeral(validNumeral);
+        invalidResult = galacticDictionary.isExistingRomanNumeral(invalidNumeral);
+
+        //Assert
+        assertTrue(validResult);
+        assertFalse(invalidResult);
     }
 }

@@ -16,17 +16,17 @@ public class Interpreter implements IInterpreter {
         if (inputStringArray.length < 3)
             throw new NoIdeaException();
 
-        if(isValidSimpleSetStatement(inputStringArray)) { //Simple Set-Statement
+        if(isSimpleSetStatement(inputStringArray)) {
             saveRomanToGalactic(inputStringArray);
         }
-        else if (Objects.equals(inputStringArray[inputStringArray.length - 1].toLowerCase(), "credits")) {
-            throw new NoIdeaException();
+        else if (isUnitValueSetStatement(inputStringArray)) {
+            processUnitValueSetStatement(inputStringArray);
         }
-        else if (input.toLowerCase().startsWith("how much is ")) {
-            if (inputStringArray.length > 4) {
-                String [] galacticNumerals = Arrays.copyOfRange(inputStringArray, 3, inputStringArray.length);
-                return input.substring(12) + " is " + numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
-            }
+        else if (isHowManyCreditsQuestion(input, inputStringArray)) {
+            return processHowManyCreditsQuestion(inputStringArray);
+        }
+        else if (isHowMuchQuestion(input, inputStringArray)) {
+            return processHowMuchQuestion(input, inputStringArray);
         }
         else {
             throw new NoIdeaException();
@@ -41,8 +41,84 @@ public class Interpreter implements IInterpreter {
         galacticDictionary.setRomanGalactic(roman, galactic);
     }
 
-    private boolean isValidSimpleSetStatement(String[] input) {
-        //Set-Statement
-        return Objects.equals(input[1].toLowerCase(), "is") && input.length == 3 && input[2].length() == 1;
+    private String processHowManyCreditsQuestion(String[] input) throws NoIdeaException {
+        String unit = input[input.length - 2]; //Unit comes before question mark
+        int valuePerUnit = galacticDictionary.getValuePerUnit(unit);
+        if (valuePerUnit == -1)
+            throw new NoIdeaException();
+
+        int galacticNumeralsStart = 4; //galactic numerals start at index 4
+        int galacticNumeralsEnd = input.length - 2; //final galactic numeral comes before unit keyword
+        String[] galacticNumerals = Arrays.copyOfRange(input, galacticNumeralsStart, galacticNumeralsEnd);
+        int amountOfUnit = numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
+
+        if (amountOfUnit <= 0)
+            throw new NoIdeaException();
+
+        int result = amountOfUnit * valuePerUnit;
+        return String.join(" ", galacticNumerals) + " " + unit +  " is " + result + " Credits";
+    }
+
+    private void processUnitValueSetStatement(String[] input) {
+        int indexOfUnitValue = 0;
+        String unit = "";
+        String[] galacticNumerals;
+        int amountOfUnit = 0;
+        int creditsForAmountOfUnit = Integer.parseInt(input[input.length - 2]); //Amount comes before the word "Credits"
+        int creditsPerUnit = 0;
+
+        for (int i = 0; i < input.length; i++) {
+            if (Character.isUpperCase(input[i].charAt(0))) {
+                indexOfUnitValue = i;
+                unit = input[i];
+                break;
+            }
+        }
+        galacticNumerals = Arrays.copyOfRange(input, 0, indexOfUnitValue);
+        amountOfUnit = numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
+
+        creditsPerUnit = creditsForAmountOfUnit / amountOfUnit;
+
+        galacticDictionary.setValuePerUnit(unit, creditsPerUnit);
+    }
+
+    private String processHowMuchQuestion (String inputString, String[] input) {
+        String [] galacticNumerals = Arrays.copyOfRange(input, 3, input.length);
+        return inputString.substring(12, inputString.length() - 2) + " is " + numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
+    }
+
+    private boolean isSimpleSetStatement(String[] input) {
+        return Objects.equals(input[1].toLowerCase(), "is")
+                && input.length == 3
+                && input[2].length() == 1
+                && galacticDictionary.isExistingRomanNumeral(input[2].toUpperCase());
+    }
+
+    private boolean isHowMuchQuestion(String inputString, String[] input) {
+        return inputString.toLowerCase().startsWith("how much is ")
+                && input.length >= 4
+                && Objects.equals(input[input.length - 1], "?");
+    }
+
+    private boolean isHowManyCreditsQuestion(String inputString, String[] input) {
+        //Check for following type of question
+        //> how many Credits is glob prok Silver ?
+        if (!inputString.toLowerCase().startsWith("how many credits is "))
+            return false;
+
+        if(!Objects.equals(input[input.length - 1], "?"))
+            return false;
+
+        return true;
+    }
+
+    private boolean isUnitValueSetStatement(String[] input) {
+        //Checks whether:
+        //"Credits" is the last word of the input
+        //String contains exactly one word other than "Credits" that starts with a capital letter
+        //String that comes before Credits is a valid integer value
+        return Objects.equals(input[input.length - 1].toLowerCase(), "credits")
+                && Arrays.stream(input).filter(x -> !Objects.equals(x, "Credits")
+                    && Character.isUpperCase(x.charAt(0))).count() == 1;
     }
 }

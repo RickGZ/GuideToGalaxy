@@ -54,11 +54,15 @@ public class GalacticDictionary implements IGalacticDictionary {
         }
     }
 
+    public boolean isExistingRomanNumeral(String givenNumeral) {
+        return romanNumeralValues.containsKey(givenNumeral);
+    }
+
     public void setValuePerUnit(String unit, int value) {
         valuesPerUnit.put(unit, value);
     }
 
     public int getValuePerUnit(String unit) {
-        return valuesPerUnit.get(unit);
+        return valuesPerUnit.getOrDefault(unit, -1);
     }
 }
