@@ -1,7 +1,15 @@
 package org.interpreter;
 
+import org.interpreter.Exceptions.NoIdeaException;
+import org.interpreter.GalacticDictionary.GalacticDictionary;
+import org.interpreter.GalacticDictionary.IGalacticDictionary;
+import org.interpreter.NumeralCalculator.INumeralCalculator;
+import org.interpreter.NumeralCalculator.NumeralCalculator;
+
 import java.util.Arrays;
 import java.util.Objects;
+
+import static java.lang.Math.round;
 
 public class Interpreter implements IInterpreter {
     IGalacticDictionary galacticDictionary;
@@ -43,7 +51,7 @@ public class Interpreter implements IInterpreter {
 
     private String processHowManyCreditsQuestion(String[] input) throws NoIdeaException {
         String unit = input[input.length - 2]; //Unit comes before question mark
-        int valuePerUnit = galacticDictionary.getValuePerUnit(unit);
+        float valuePerUnit = galacticDictionary.getValuePerUnit(unit);
         if (valuePerUnit == -1)
             throw new NoIdeaException();
 
@@ -55,17 +63,14 @@ public class Interpreter implements IInterpreter {
         if (amountOfUnit <= 0)
             throw new NoIdeaException();
 
-        int result = amountOfUnit * valuePerUnit;
+        int result = round(amountOfUnit * valuePerUnit);
         return String.join(" ", galacticNumerals) + " " + unit +  " is " + result + " Credits";
     }
 
     private void processUnitValueSetStatement(String[] input) {
         int indexOfUnitValue = 0;
         String unit = "";
-        String[] galacticNumerals;
-        int amountOfUnit = 0;
         int creditsForAmountOfUnit = Integer.parseInt(input[input.length - 2]); //Amount comes before the word "Credits"
-        int creditsPerUnit = 0;
 
         for (int i = 0; i < input.length; i++) {
             if (Character.isUpperCase(input[i].charAt(0))) {
@@ -74,10 +79,10 @@ public class Interpreter implements IInterpreter {
                 break;
             }
         }
-        galacticNumerals = Arrays.copyOfRange(input, 0, indexOfUnitValue);
-        amountOfUnit = numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
+        String[] galacticNumerals = Arrays.copyOfRange(input, 0, indexOfUnitValue);
+        int amountOfUnit = numeralCalculator.galacticNumeralsToInteger(galacticNumerals);
 
-        creditsPerUnit = creditsForAmountOfUnit / amountOfUnit;
+        float creditsPerUnit = (float) creditsForAmountOfUnit / amountOfUnit;
 
         galacticDictionary.setValuePerUnit(unit, creditsPerUnit);
     }

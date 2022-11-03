@@ -1,4 +1,6 @@
-package org.interpreter;
+package org.interpreter.NumeralCalculator;
+
+import org.interpreter.GalacticDictionary.IGalacticDictionary;
 
 public class NumeralCalculator implements INumeralCalculator {
     IGalacticDictionary galacticDictionary;

@@ -1,12 +1,12 @@
-package org.interpreter;
+package org.interpreter.GalacticDictionary;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GalacticDictionary implements IGalacticDictionary {
-    private Map<String, String> romanToGalactic;
-    private Map<String, Integer> romanNumeralValues;
-    private Map<String, Integer> valuesPerUnit;
+    private final Map<String, String> romanToGalactic;
+    private final Map<String, Integer> romanNumeralValues;
+    private final Map<String, Float> valuesPerUnit;
 
     public GalacticDictionary() {
         romanToGalactic = new HashMap<>();
@@ -39,10 +39,8 @@ public class GalacticDictionary implements IGalacticDictionary {
 
     public int getIntegerValueForGalacticNumeral(String galacticNumeral) {
         for (Map.Entry<String, String> entry : romanToGalactic.entrySet()) {
-            if (galacticNumeral.equals(entry.getValue())) {
-                int integerValue = romanNumeralValues.get(entry.getKey());
-                return integerValue;
-            }
+            if (galacticNumeral.equals(entry.getValue()))
+                return romanNumeralValues.get(entry.getKey());
         }
         return 0;
     }
@@ -58,11 +56,11 @@ public class GalacticDictionary implements IGalacticDictionary {
         return romanNumeralValues.containsKey(givenNumeral);
     }
 
-    public void setValuePerUnit(String unit, int value) {
+    public void setValuePerUnit(String unit, float value) {
         valuesPerUnit.put(unit, value);
     }
 
-    public int getValuePerUnit(String unit) {
-        return valuesPerUnit.getOrDefault(unit, -1);
+    public float getValuePerUnit(String unit) {
+        return valuesPerUnit.getOrDefault(unit, (float) -1);
     }
 }

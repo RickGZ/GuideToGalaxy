@@ -1,5 +1,7 @@
 package org.interpreter;
 
+import org.interpreter.GalacticDictionary.GalacticDictionary;
+import org.interpreter.GalacticDictionary.IGalacticDictionary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
